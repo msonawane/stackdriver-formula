@@ -16,8 +16,16 @@ install packages:
     - require:
       - pkgrepo: stackdriver-repo
 
-configure api key:
+configure_api_key:
   cmd.run:
     - name: /opt/stackdriver/stack-config --api-key {{ stackdriver.api_key }}
     - require:
       - pkg: install packages
+
+stackdriver_services:
+  service.running:
+    - enable: true
+    - names:
+      - stackdriver-agent
+      - stackdriver-extractor
+    

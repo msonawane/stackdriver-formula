@@ -1,3 +1,3 @@
 include:
-  - stackdriver.repo
+  - stackdriver.install
   

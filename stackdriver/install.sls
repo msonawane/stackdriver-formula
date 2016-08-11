@@ -9,7 +9,7 @@ stackdriver-remove-collectd:
       - collectd
       - collectd-core
 
-install packages:
+install_packages:
   pkg.installed:
     - names:
       - stackdriver-agent
@@ -17,10 +17,14 @@ install packages:
       - pkgrepo: stackdriver-repo
 
 configure_api_key:
-  cmd.run:
-    - name: /opt/stackdriver/stack-config --api-key {{ stackdriver.api_key }}
+  file.managed:
+    - name: {{stackdriver.sysconfig}}
+    - source: salt://stackdriver/files/stackdriver-agent
+    - template: jinja
+    - context:
+        API_KEY: {{stackdriver.api_key}}
     - require:
-      - pkg: install packages
+      - pkg: install_packages
 
 stackdriver_services:
   service.running:
@@ -28,4 +32,6 @@ stackdriver_services:
     - names:
       - stackdriver-agent
       - stackdriver-extractor
+    - watch:
+      - file: configure_api_key
     

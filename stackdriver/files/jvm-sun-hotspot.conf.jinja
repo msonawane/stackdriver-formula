@@ -1,0 +1,74 @@
+
+{{jvm_conf}}
+
+
+# This is the monitoring configuration for standalone JVMs.
+# Look for JMX_HOST and JMX_PORT to adjust your configuration file.
+# Replace JMX_PORT below with the value configured in your JVM deployment.
+LoadPlugin java
+<Plugin "java">
+	JVMARG "-Djava.class.path=/opt/stackdriver/collectd/share/collectd/java/collectd-api.jar:/opt/stackdriver/collectd/share/collectd/java/generic-jmx.jar"
+  LoadPlugin "org.collectd.java.GenericJMX"
+	<Plugin "GenericJMX">
+  {%- for k,v in jvm_conf.iteritems() %}
+		<MBean "{{k}}">
+	{%- for a,s in v.iteritems() %}
+	  {%- if s is string %}
+			{{a}}  "{{s}}"
+		{%- endif %}
+	{%- endfor %}   
+		{%- for v in v['values'] %}
+		{%- for i,j in v.iteritems() %}
+		   	<Value>
+		   	{%- for t,y in j.iteritems() %}
+		   	  {{t}}  "{{y}}"
+		   	{%- endfor %}
+		   	</Value>
+		{%- endfor %} 
+		{%- endfor %}
+
+		</MBean>
+
+	{% endfor -%}
+      <Connection>
+            # When using non-standard JVM configurations, replace the below with
+            #ServiceURL "service:jmx:rmi:///jndi/rmi://JMX_HOST:JMX_PORT/jmxrmi"
+            ServiceURL "service:jmx:rmi:///jndi/rmi://localhost:{{JMX_PORT}}/jmxrmi"
+            InstancePrefix "jvm"
+
+            Collect "jvm_localhost_Threading"
+            Collect "jvm_localhost_Memory"
+            Collect "jvm_localhost_Runtime"
+            Collect "jvm_localhost_os"
+            Collect "jvm_localhost_gc"
+        </Connection>
+    </Plugin>
+</Plugin>
+
+LoadPlugin match_regex
+LoadPlugin target_set
+LoadPlugin target_replace
+<Chain "GenericJMX_jvm">
+    <Rule "rewrite_genericjmx_to_jvm">
+        <Match regex>
+            Plugin "^GenericJMX$"
+            PluginInstance "^jvm.*$"
+        </Match>
+        <Target "replace">
+            PluginInstance "jvm" ""
+        </Target>
+        <Target "set">
+            Plugin "jvm"
+        </Target>
+        Target "return"
+    </Rule>
+</Chain>
+
+<Chain "PreCache">
+    <Rule "jump_to_GenericJMX_jvm">
+        <Target "jump">
+            Chain "GenericJMX_jvm"
+        </Target>
+    </Rule>
+</Chain>
+PreCacheChain "PreCache"

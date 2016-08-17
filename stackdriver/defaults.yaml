@@ -1,2 +1,92 @@
 stackdriver:
   api_key: ''
+  jvm_conf:
+    jvm_localhost_Threading:
+      ObjectName: "java.lang:type=Threading"
+      values:
+        - DaemonThreadCount:
+            Type: "gauge"
+            InstancePrefix: "threading-daemon_thread_count"
+            Table: false
+            Attribute: "DaemonThreadCount"
+        - ThreadCount:
+            Type: "gauge"
+            InstancePrefix: "threading-thread_count"
+            Table: false
+            Attribute: "ThreadCount"
+        - PeakThreadCount:
+            Type: "gauge"
+            InstancePrefix: "hreading-peak_thread_count"
+            Table: false
+            Attribute: "PeakThreadCount"
+    jvm_localhost_Memory:
+      ObjectName: "java.lang:type=Memory"
+      values:
+        - HeapMemoryUsage_committed:
+            Type: "memory"
+            InstancePrefix: "memory-heap_usage_committed"
+            Table: false
+            Attribute: "HeapMemoryUsage.committed"
+        - NonHeapMemoryUsage_committed:
+            Type: "memory"
+            InstancePrefix: "memory-non_heap_usage_committed"
+            Table: false
+            Attribute: "NonHeapMemoryUsage.committed"
+        - NonHeapMemoryUsage_used:
+            Type: "memory"
+            InstancePrefix: "memory-non_heap_usage_used"
+            Table: false
+            Attribute: "NonHeapMemoryUsage.used"
+        - HeapMemoryUsage_used:
+            Type: "memory"
+            InstancePrefix: "memory-heap_usage_used"
+            Table: false
+            Attribute: "HeapMemoryUsage.used"
+        - HeapMemoryUsage_max:
+            Type: "memory"
+            InstancePrefix: "memory-heap_usage_max"
+            Table: false
+            Attribute: "HeapMemoryUsage.max"
+        - NonHeapMemoryUsage_max:
+            Type: "memory"
+            InstancePrefix: "memory-non_heap_usage_max"
+            Table: false
+            Attribute: "NonHeapMemoryUsage.max"
+    jvm_localhost_Runtime:
+      ObjectName: "java.lang:type=Runtime"
+      values:
+        - Uptime:
+            Type: "counter"
+            InstancePrefix: "runtime-uptime"
+            Table: false
+            Attribute: "Uptime"
+    jvm_localhost_os:
+      ObjectName: "java.lang:type=OperatingSystem"
+      values:
+        - OpenFileDescriptorCount:
+            Type: "guage"
+            InstancePrefix: "os-open_fd_count"
+            Table: false
+            Attribute: "OpenFileDescriptorCount"
+        - ProcessCpuTime:
+            Type: "counter"
+            InstancePrefix: "os-process_cpu_time"
+            Table: false
+            Attribute: "ProcessCpuTime"
+    jvm_localhost_gc:
+      ObjectName: "java.lang:type=GarbageCollector,name=*"
+      InstanceFrom: "name"
+      values:
+        - CollectionCount:
+            Type: "counter"
+            InstancePrefix: "gc-collection_count"
+            Table: false
+            Attribute: "CollectionCount"
+        - CollectionTime:
+            Type: "counter"
+            InstancePrefix: "gc-collection_time"
+            Table: false
+            Attribute: "CollectionTime"
+
+
+

@@ -12,6 +12,8 @@ google-cloud-logging-repo:
 
 google-fluentd-install:
   pkg.installed:
-    - name: google-fluentd
+    - names:
+      - google-fluentd
+      - google-fluentd-catch-all-config
     - require:
       - pkgrepo: google-cloud-logging-repo

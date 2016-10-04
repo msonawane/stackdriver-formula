@@ -17,3 +17,12 @@ google-fluentd-install:
       - google-fluentd-catch-all-config
     - require:
       - pkgrepo: google-cloud-logging-repo
+
+
+google-fluentd_service:
+  service.running:
+    - enable: true
+    - names:
+      - google-fluentd
+    - require:
+      - pkg: google-fluentd-install
